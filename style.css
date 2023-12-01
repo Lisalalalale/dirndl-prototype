@@ -1,0 +1,140 @@
+
+
+/* Our default values set as CSS variables */
+:root {
+  --color-bg: #FAF0E6;
+  --color-text-main: #41403F;
+  --color-primary: #9B9691;
+  --font-family: "Roboto Slab";
+  --font-family-header: "Roboto Slab";
+}
+
+
+
+body {
+  background-color: var(--color-bg);
+  font-family: var(--font-family);
+}
+
+.logo-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  left: initial;
+  width: 150px;
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  z-index: 2;
+}
+
+.a-enter-ar{
+ right: unset;
+  bottom: unset;
+}
+.a-enter-ar-button{
+   display:block;
+  position: absolute;
+  right: 0.4em;
+  top: 1em ;
+   width: 40px;
+  height: 40px;
+  background-image: url(https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/hand.gemacht%20WebApp%20button%20ar%20kohlegrau.svg?v=1700642683751);
+  background-size: contain;
+  background-color: rgba(0,0,0,0.0);
+}
+.a-dom-overlay:not(.a-no-style) {
+  padding: 0;
+   
+}
+
+#container-message-button{
+  display: flex;
+    position:absolute;
+  bottom:15%;
+  width:100%;
+  flex-direction: column;
+    align-items: center;
+background: #9B969155;
+}
+
+#dom-overlay-message {
+  padding: 1em;
+  
+  color: var(--color-text-main);
+  user-select: none;
+  z-index:99;
+}
+#close-button {
+    background-image: url(https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/hand.gemacht%20WebApp%20close%20kohlegrau.svg?v=1700642681292);
+  background-size: cover;
+  background-color: rgba(0,0,0,0.0);
+  width: 15px;
+  height: 15px;
+  border:none;
+  z-index:999;
+    
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+#exit-AR-button {
+  display:none;
+  right: 0.4em;
+  top: 0.7em;
+  position:absolute;
+ 
+  background-image: url(https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/hand.gemacht%20WebApp%20close%20kohlegrau.svg?v=1700642681292);
+  background-size: cover;
+  background-color: rgba(0,0,0,0.0);
+  width: 40px;
+  height: 40px;
+  border:none;
+  z-index:999;
+}
+
+
+#place-button {
+  display: none;
+  
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  background-image: url(https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/hand.gemacht%20WebApp%20play%20perlweiss.svg?v=1700642682124);
+  background-color: var(--color-primary);
+  background-repeat: no-repeat;
+  background-size: 50% 50%;
+  background-position:center;
+  border:none;
+  margin: 10px;
+  
+}
+
+
+
+#score-container{
+  display:none; 
+  width: 50px; 
+  height: 50px;
+  border-radius: 50%; 
+  background-color: #FF7850; 
+
+  position: fixed;
+  top: 1.15em;
+  left: 1.15em;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-bg); 
+  font-size: 18px; 
+  font-weight: bold; 
+}
+.a-enter-ar-button:hover, #exit-AR-button:hover, #placeButton:hover {
+  background-color: var(--color-primary)
+}
