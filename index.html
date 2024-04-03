@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dirndl Prototyp</title>
+
+    <!-- A Frame import -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+    <!-- The website stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+
+    <!-- AABB-collider package from https://github.com/supermedium/superframe/tree/master/components/aabb-collider/-->
+    <script src="https://unpkg.com/aframe-aabb-collider-component@3.2.2/dist/aframe-aabb-collider-component.min.js"></script>
+
+    <!-- The website JavaScript file -->
+    <script type="module" src="script.js"></script>
+    <script type="module" src="score-handler.js"></script>
+    <script type="module" src="interactions.js"></script>
+
+    <!-- Font from Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab&family=Shadows+Into+Light&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- hand.gemacht logo -->
+    <div class="logo-container">
+      <img
+        class="logo"
+        src="https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/hand.gemacht%20Logo-kohlegrau.svg?v=1700642683375"
+        alt="hand.gemacht Logo"
+        width="100px"
+        height="100px"
+      />
+    </div>
+    <!-- a-scene with all 3D-objects-->
+    <a-scene
+      xr-mode-ui="XRMode:ar;"
+      webxr="requiredFeatures: hit-test;
+             optionalFeatures:dom-overlay,anchors;
+              overlayElement:#dom-overlay;
+             referenceSpaceType:local;"
+      ar-hit-test="enabled:false"
+    >
+      <a-assets>
+        <a-asset-item
+          id="dirndl"
+          src="https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/DIRNDL2K-0000-0000-0000-000000000000_2k.glb?v=1700651194633"
+        ></a-asset-item>
+        <a-asset-item
+          id="candle"
+          src="https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/simple_candle_in_candle_holder.glb?v=1701083300224"
+        ></a-asset-item>
+        <audio
+          id="audio1"
+          src="https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/DIRNDL2K-0000-0000-0000-000000000000_zitat.mp3?v=1701108215994"
+          crossorigin="anonymous"
+          preload="auto"
+        ></audio>
+      </a-assets>
+
+      <!-- camera with unvisible cursor and candle -->
+      <a-entity id="camera" camera>
+        <a-entity
+          id="cursor"
+          tracking-collision
+          aabb-collider="objects: .space; enabled:false;"
+          raycaster="objects: .collidable; enabled:false"
+          position="0 0 -0.2"
+          geometry="primitive:ring; radiusInner:0.004; radiusOuter:0.007"
+          material="color: black; shader:flat"
+          visible="false"
+        ></a-entity>
+        <a-entity
+          id="cameraObject"
+          get-draged-camera="enabled:false;"
+          gltf-model="#candle"
+          position="0 -0.05 -0.2"
+          scale="0.05 0.05 0.05"
+          visible="false"
+        ></a-entity>
+      </a-entity>
+
+      <!-- container with all elements which get placed with hit-testing -->
+      <a-entity id="container" hide-on-hit-test-start position="0 0 -4">
+        <a-entity gltf-model="#dirndl" position="0 0 0"> </a-entity>
+        <a-entity
+          id="dirndlSpace"
+          data-aabb-collider-dynamic
+          position="0 0.92456 0"
+          geometry="height: 1.2"
+          material="transparent: true;
+                    opacity: 0.0"
+          class="space"
+        >
+        </a-entity>
+
+        <a-entity
+          id="point1"
+          cursor-specific-listener
+          position="0 0 0"
+          geometry="primitive:sphere; radius:0.015"
+          material="color:#A04B19"
+          animation__scale="property: scale; to: 2, 2, 2 ; startEvents: startAnimIn; dur: 500"
+          animation__scale_rev="property: scale; to: 1, 1, 1 ; startEvents: startAnimOut; dur: 500"
+          animation__scale_double="property: scale; to: 4, 4, 4 ; startEvents: startAnimInDouble; dur: 500"
+          animation__scale_double_rev="property: scale; to: 2, 2, 2 ; startEvents: startAnimOutDouble; dur: 500"
+          animation__color="property: components.material.material.color; type: color; to: #FFAF96; startEvents: startAnimCol; dur: 2000"
+          animation__color_rev="property: components.material.material.color; type: color; to: #9B9691; startEvents: startAnimColRev; dur: 100"
+          class="collidable"
+          visible="false"
+        >
+        </a-entity>
+        <a-entity
+          id="point1shadow"
+          cursor-listener
+          position="0 0 0"
+          geometry="primitive:sphere; radius:0.06"
+          material="transparent: true; opacity: 0.0"
+          visible="true"
+          class="collidable droppable"
+        >
+        </a-entity>
+        <a-entity
+          id="point2"
+          cursor-specific-listener
+          position="0 0 0"
+          geometry="primitive:sphere; radius:0.015"
+          material="color:#A04B19"
+          animation__scale="property: scale; to: 2, 2, 2 ; startEvents: startAnimIn; dur: 500"
+          animation__scale_rev="property: scale; to: 1, 1, 1 ; startEvents: startAnimOut; dur: 500"
+          animation__scale_double="property: scale; to: 4, 4, 4 ; startEvents: startAnimInDouble; dur: 500"
+          animation__scale_double_rev="property: scale; to: 2, 2, 2 ; startEvents: startAnimOutDouble; dur: 500"
+          animation__color="property: components.material.material.color; type: color; to: #FFAF96; startEvents: startAnimCol; dur: 2000"
+          animation__color_rev="property: components.material.material.color; type: color; to: #9B9691; startEvents: startAnimColRev; dur: 100"
+          class="collidable"
+          visible="false"
+        >
+        </a-entity>
+        <a-entity
+          id="point2shadow"
+          cursor-listener
+          position="0 0 0"
+          geometry="primitive:sphere; radius:0.06"
+          material="transparent: true; opacity: 0.0"
+          visible="true"
+          class="collidable droppable"
+        >
+        </a-entity>
+        <a-entity
+          id="point3"
+          cursor-specific-listener
+          position="0 0 0"
+          geometry="primitive:sphere; radius:0.015"
+          material="color:#A04B19"
+          animation__scale="property: scale; to: 2, 2, 2 ; startEvents: startAnimIn; dur: 500"
+          animation__scale_rev="property: scale; to: 1, 1, 1 ; startEvents: startAnimOut; dur: 500"
+          animation__scale_double="property: scale; to: 4, 4, 4 ; startEvents: startAnimInDouble; dur: 500"
+          animation__scale_double_rev="property: scale; to: 2, 2, 2 ; startEvents: startAnimOutDouble; dur: 500"
+          animation__color="property: components.material.material.color; type: color; to: #FFAF96; startEvents: startAnimCol; dur: 2000"
+          animation__color_rev="property: components.material.material.color; type: color; to: #9B9691; startEvents: startAnimColRev; dur: 100"
+          class="collidable"
+          visible="false"
+        >
+        </a-entity>
+        <a-entity
+          id="point3shadow"
+          cursor-listener
+          position="0 0 0"
+          geometry="primitive:sphere; radius:0.06"
+          material="transparent: true; opacity: 0.0"
+          visible="true"
+          class="collidable droppable"
+        >
+        </a-entity>
+
+        <a-entity
+          id="point4"
+          cursor-specific-listener
+          position="0 0 0"
+          geometry="primitive:sphere; radius:0.015"
+          material="color:#A04B19"
+          animation__scale="property: scale; to: 2, 2, 2 ; startEvents: startAnimIn; dur: 500"
+          animation__scale_rev="property: scale; to: 1, 1, 1 ; startEvents: startAnimOut; dur: 500"
+          animation__scale_double="property: scale; to: 4, 4, 4 ; startEvents: startAnimInDouble; dur: 500"
+          animation__scale_double_rev="property: scale; to: 2, 2, 2 ; startEvents: startAnimOutDouble; dur: 500"
+          animation__color="property: components.material.material.color; type: color; to: #FFAF96; startEvents: startAnimCol; dur: 2000"
+          animation__color_rev="property: components.material.material.color; type: color; to: #9B9691; startEvents: startAnimColRev; dur: 100"
+          class="collidable"
+          visible="false"
+        >
+        </a-entity>
+        <a-entity
+          id="point4shadow"
+          cursor-listener
+          position="0 0 0"
+          geometry="primitive:sphere; radius:0.06"
+          material="transparent: true; opacity: 0.0"
+          visible="true"
+          class="collidable droppable"
+        ></a-entity>
+        <a-entity
+          id="candleDrag"
+          get-draged="enabled:false"
+          gltf-model="https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/simple_candle_in_candle_holder.glb?v=1701083300224"
+          position="-0.1 0 0.73664"
+          scale="0.1 0.1 0.1"
+          class="collidable draggable"
+        >
+        </a-entity>
+
+        <a-entity
+          id="candleSpace"
+          data-aabb-collider-dynamic
+          position="-0.1 0.27046 0.71474"
+          scale="1 -0.77827 1"
+          geometry="width: 0.4; height: 0.8; depth: 0.4"
+          material="transparent: true; opacity: 0.0"
+          class="space"
+        >
+        </a-entity>
+      </a-entity>
+    </a-scene>
+    <div id="dom-overlay">
+      <div id="container-message-button">
+        <div id="dom-overlay-message">
+          Klicke oben rechts auf den Button, um den AR-Modus zu aktivieren.
+        </div>
+        <button id="place-button">Los gehts!</button>
+
+        <button id="ok-button">OK</button>
+      </div>
+
+      <button id="exit-AR-button"></button>
+
+      <div id="score-container">
+        <span id="score"> Score: 0/9</span>
+      </div>
+      <button id="pause-button">Neu platzieren</button>
+    </div>
+  </body>
+</html>
