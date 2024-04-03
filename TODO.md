@@ -1,3 +1,0 @@
-# TODO 🚧
-
-funktions auslagern text

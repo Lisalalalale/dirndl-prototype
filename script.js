@@ -1,28 +1,9 @@
-import{startInteraction, endInteraction} from "./interactions.js"
+import { startInteraction, endInteraction} from "./interactions.js";
 
-//sets position out of an array
-let positions = [[-0.0023, 1.2612, -0.1568],
-                 [-0.0569, 1.1339, 0.1002],
-                 [0.1425, 0.9722, 0.0549],
-                 [-0.168, 0.774, 0.035]]
-function makeAnnotations(positions){
-
-  
-  for (let i=1; i < positions.length+1;  i++){
-    let annotation = document.getElementById(`point${i}`)
-        annotation.setAttribute("fulfil", "")
-
-    annotation.setAttribute("position", (positions[i]))
-   
-    
-  }
-}
-
-          
 
 //hide 3d objects in AR while placing them
 AFRAME.registerComponent("hide-on-hit-test-start", {
-  init: function (){
+  init: function () {
     let self = this;
     this.el.sceneEl.addEventListener("ar-hit-test-start", function () {
       window.addEventListener("beforexrselect", preventClicks);
@@ -34,9 +15,9 @@ AFRAME.registerComponent("hide-on-hit-test-start", {
     });
     this.el.sceneEl.addEventListener("exit-vr", function () {
       self.el.object3D.visible = true;
-    })
-  }
-})
+    });
+  },
+});
 
 function preventClicks(e) {
   e.preventDefault();
@@ -44,76 +25,92 @@ function preventClicks(e) {
 
 // handling the DOM-Overlay
 window.addEventListener("DOMContentLoaded", function () {
-  const sceneEl = document.querySelector("a-scene")
-  const message = document.getElementById("dom-overlay-message")
-  const exitButton = document.getElementById("exit-AR-button")
-  const placeButton = document.getElementById("place-button")
-  const container = document.getElementById("container-message-button")
-  const score = document.getElementById("score-container")
-  const closeButton = document.getElementById("close-button")
-  
-  let placed = false
- // makeAnnotations(positions)
-  
-   // If the user taps on any buttons or interactive elements we may add then prevent
+  const sceneEl = document.querySelector("a-scene");
+  const message = document.getElementById("dom-overlay-message");
+  const exitButton = document.getElementById("exit-AR-button");
+  const placeButton = document.getElementById("place-button");
+  const pauseButton = document.getElementById("pause-button");
+  const container = document.getElementById("container-message-button");
+  const score = document.getElementById("score-container");
+  const okButton = document.getElementById("ok-button");
+  let interactionStarted = false;
+
+  // makeAnnotations(positions)
+
+  // If the user taps on any buttons or interactive elements we may add then prevent
   // Any WebXR select events from firing
   container.addEventListener("beforexrselect", (e) => {
     e.preventDefault();
   });
 
-
   //cancels the xr session
   exitButton.addEventListener("click", function () {
     sceneEl.xrSession.end();
   });
-  
-  closeButton.addEventListener("click", function() {
-    message.style.display = "none"
-    this.style.display = "none"
-  })
-  
-  //toggles between placing and interaction
-  placeButton.addEventListener("click", function() {
-   if(!placed){
-     startInteraction()
-     displayNewText(closeButton, message, "Interagiere nun mit dem Objekt, indem du dich in die Nähe des Objekts bewegst und auf Punkte zielst. Oder hebe einen Gegenstand auf. <br />Wenn du auf den Pause-Button klickst, kannst du das Objekt neu platzieren.")
-      sceneEl.setAttribute("ar-hit-test", {
-      enabled: false,
-    })
-     this.style.backgroundImage = "url(https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/hand.gemacht%20WebApp%20pause%20perlweiss.svg?v=1700642681717)"
-     
-   }
-    else{
-      endInteraction()
-      sceneEl.setAttribute("ar-hit-test", {
-        enabled:true,
-      })
-           this.style.backgroundImage = "url(https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/hand.gemacht%20WebApp%20play%20perlweiss.svg?v=1700642682124)"
 
-      displayNewText(closeButton, message, `Klicke auf eine Stelle, um das Objekt zu platzieren .<br /> Wenn du mit deiner Positionierung zufrieden bist, klicken auf den Button links.` )
-    }
-    placed = !placed
-  })
+  okButton.addEventListener("click", function () {
+    message.style.display = "none";
+    this.style.display = "none";
   
+  });
+
+  //toggles between placing and interaction
+  placeButton.addEventListener("click", function () {
+    startInteraction();
+    
+    interactionStarted = true;
+    displayNewText(
+      okButton,
+      message,
+      "Erkunde nun die Objekte. Du kannst Punkte am Dirndl aktivieren und die Kerze an einem Punkt am Dirndl zuordnen. Dafür bekommst du Punkte.  Beginne indem du dich dem Dirndl oder der Kerze näherst. Dann folgen weitere Schritte."
+    );
+
+    sceneEl.setAttribute("ar-hit-test", {
+      enabled: false,
+    });
+    this.style.display = "none";
+    pauseButton.style.display = "flex";
+  });
+
+  pauseButton.addEventListener("click", function () {
+    endInteraction();
+    interactionStarted = false;
+    sceneEl.setAttribute("ar-hit-test", {
+      enabled: true,
+    });
+    placeButton.style.display = "flex";
+
+    displayNewText(
+      okButton,
+      message,
+      "Die Fläche wurde erkannt, du kannst das Dirndl an der passenden Stelle platzieren, indem du darauf klickst. Klicke an eine andere Stelle, um das Dirndl zu bewegen. Du solltest das Dirndl in ganzer Größe sehen. Wenn du fertig bist, klicke auf Los gehts!"
+    );
+  });
+
   sceneEl.addEventListener("enter-vr", function () {
     if (this.is("ar-mode")) {
       // Entered AR
       this.setAttribute("ar-hit-test", {
-        enabled:true,
-        target:"#container",
-        type:"footprint",
-      })
-      score.style.display= "flex"
+        enabled: true,
+        target: "#container",
+        type: "footprint",
+      });
+      score.style.display = "flex";
       message.textContent = "";
-      container.style.background = "#FAF0E6"
-      exitButton.style.display = "block"
+      container.style.background = "#FAF0E6";
+      exitButton.style.display = "block";
 
       // Hit testing is available
       this.addEventListener(
         "ar-hit-test-start",
         function () {
-          displayNewText(closeButton, message, `Die Umgebung wird gescannt, bewege die Kamera langsam entlang einer Fläche.`)
+          displayNewText(
+            okButton,
+            message,
+            "Willkommen im AR-Modus! Um das Dirndl zu platzieren suche eine freie Bodenfläche und scanne diese, indem du das Gerät langsam darüber bewegst. "
+          );
         },
+
         { once: true }
       );
 
@@ -121,7 +118,11 @@ window.addEventListener("DOMContentLoaded", function () {
       this.addEventListener(
         "ar-hit-test-achieved",
         function () {
-          displayNewText(closeButton, message,`Klicke auf eine Stelle, um das Objekt zu platzieren .<br /> Wenn du mit deiner Positionierung zufrieden bist, klicke auf den Play-Button.`)
+          displayNewText(
+            okButton,
+            message,
+            "Die Fläche wurde erkannt, du kannst das Dirndl an der passenden Stelle platzieren, indem du darauf klickst. Klicke an eine andere Stelle, um das Dirndl zu bewegen. Du solltest das Dirndl in ganzer Größe sehen. Wenn du fertig bist, klicke auf Los gehts!"
+          );
         },
         { once: true }
       );
@@ -132,7 +133,6 @@ window.addEventListener("DOMContentLoaded", function () {
         function () {
           // Object placed for the first time
           placeButton.style.display = "flex";
-          
         },
         { once: true }
       );
@@ -140,23 +140,19 @@ window.addEventListener("DOMContentLoaded", function () {
   });
 
   sceneEl.addEventListener("exit-vr", function () {
-    displayNewText(closeButton, message,"AR-Mode wurde verlassen")
-    container.style.background = "#9B969155"
-    endInteraction()
-    exitButton.style.display = "none"
-    placeButton.style.display = "none"
-    placeButton.style.backgroundImage = "url(https://cdn.glitch.global/1b4d9e9e-59c4-40a2-bb38-376de613510a/hand.gemacht%20WebApp%20play%20perlweiss.svg?v=1700642682124)"
-    score.style.display = "none"
-    placed = false
-    
-    
-  })
-
+    displayNewText(okButton, message, "AR-Mode wurde verlassen");
+    container.style.background = "#9B969155";
+    endInteraction();
+    exitButton.style.display = "none";
+    placeButton.style.display = "none";
+    pauseButton.style.display = "none";
+    score.style.display = "none";
+  });
 });
 
-function displayNewText(closeButton, message, text){
-  closeButton.style.display = "flex"
-  message.style.display = "flex"
-  message.innerHTML = text
+function displayNewText(okButton, message, text) {
+  okButton.style.display = "flex";
+  message.style.display = "flex";
+  message.innerHTML = text;
+  
 }
-
